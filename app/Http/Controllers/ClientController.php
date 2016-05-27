@@ -18,7 +18,7 @@ class ClientController extends Controller
       return \CodeProject\Client::create($request->all());
     }
 
-    public function update(Request $request,$id)
+    public function update(Request $request, $id)
     {
       \CodeProject\Client::find($id)->update($request->all());
     }
