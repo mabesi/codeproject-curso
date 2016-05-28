@@ -6,31 +6,33 @@ use Illuminate\Http\Request;
 
 use CodeProject\Http\Requests;
 
+use CodeProject\Client;
+
 class ClientController extends Controller
 {
     public function index()
     {
-      return \CodeProject\Client::all();
+      return Client::all();
     }
 
     public function store(Request $request)
     {
-      return \CodeProject\Client::create($request->all());
+      return Client::create($request->all());
     }
 
     public function update(Request $request, $id)
     {
-      \CodeProject\Client::find($id)->update($request->all());
+      Client::find($id)->update($request->all());
     }
 
     public function show($id)
     {
-      return \CodeProject\Client::find($id);
+      return Client::find($id);
     }
 
     public function delete($id)
     {
-      \CodeProject\Client::find($id)->delete();
+      Client::find($id)->delete();
     }
 
 }
