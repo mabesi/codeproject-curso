@@ -10,7 +10,7 @@ class ClientController extends Controller
 {
     public function index()
     {
-      echo \CodeProject\Client::all();
+      return \CodeProject\Client::all();
     }
 
     public function store(Request $request)
