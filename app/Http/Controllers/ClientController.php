@@ -2,22 +2,26 @@
 
 namespace CodeProject\Http\Controllers;
 
+use CodeProject\Repositories\ClientRepository;
 use Illuminate\Http\Request;
-
-use CodeProject\Http\Requests;
-
-use CodeProject\Entities\Client;
 
 class ClientController extends Controller
 {
+    private $repository;
+
+    public function __construct(ClientRepository $repository)
+    {
+      $this->repository = $repository;
+    }
+
     public function index()
     {
-      return Client::all();
+      return $this->repository->all();
     }
 
     public function store(Request $request)
     {
-      return Client::create($request->all());
+      return $this->repository->create($request->all());
     }
 
     public function update(Request $request, $id)
