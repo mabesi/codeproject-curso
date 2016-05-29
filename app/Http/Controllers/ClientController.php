@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 use CodeProject\Http\Requests;
 
-use CodeProject\Client;
+use CodeProject\Models\Client;
 
 class ClientController extends Controller
 {
