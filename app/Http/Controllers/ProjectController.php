@@ -43,7 +43,7 @@ class ProjectController extends Controller
     public function show($id)
     {
       try {
-        return $this->repository->find($id);
+        return $this->repository->with(['owner','client'])->find($id);
       } catch (Exception $e) {
         return response()->json([
           'error' => true,
