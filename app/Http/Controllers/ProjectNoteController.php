@@ -5,6 +5,7 @@ namespace CodeProject\Http\Controllers;
 use Exception;
 use CodeProject\Repositories\ProjectNoteRepository;
 use CodeProject\Services\ProjectNoteService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 class ProjectNoteController extends Controller
@@ -55,6 +56,16 @@ class ProjectNoteController extends Controller
     public function delete($id, $noteId)
     {
       try {
+
+        try {
+          $this->repository->find($id);
+        } catch (ModelNotFoundException $e){
+          return [
+            'error' => true,
+            'message' => 'Registro não encontrado.'
+          ];
+        }
+
         $this->repository->delete($noteId);
         return response()->json([
           'error' => false,

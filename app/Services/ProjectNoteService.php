@@ -3,6 +3,7 @@
 namespace CodeProject\Services;
 use CodeProject\Repositories\ProjectNoteRepository;
 use CodeProject\Validators\ProjectNoteValidator;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Prettus\Validator\Exceptions\ValidatorException;
 
 class ProjectNoteService
@@ -42,6 +43,16 @@ class ProjectNoteService
   public function update(array $data, $id)
   {
     try {
+
+      try {
+        $this->repository->find($id);
+      } catch (ModelNotFoundException $e){
+        return [
+          'error' => true,
+          'message' => 'Registro não encontrado.'
+        ];
+      }
+
       $this->validator->with($data)->passesOrFail();
       $this->repository->update($data, $id);
       return $this->repository->find($id);

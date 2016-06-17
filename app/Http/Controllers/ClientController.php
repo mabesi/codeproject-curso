@@ -5,6 +5,7 @@ namespace CodeProject\Http\Controllers;
 use Exception;
 use CodeProject\Repositories\ClientRepository;
 use CodeProject\Services\ClientService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 class ClientController extends Controller
@@ -55,6 +56,16 @@ class ClientController extends Controller
     public function delete($id)
     {
       try {
+
+        try {
+          $this->repository->find($id);
+        } catch (ModelNotFoundException $e){
+          return [
+            'error' => true,
+            'message' => 'Registro não encontrado.'
+          ];
+        }
+
         $this->repository->delete($id);
         return response()->json([
           'error' => false,
