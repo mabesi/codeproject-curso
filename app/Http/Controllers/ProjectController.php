@@ -21,7 +21,7 @@ class ProjectController extends Controller
     public function index()
     {
       try {
-        return $this->repository->all();
+        return $this->repository->with(['owner','client'])->all();
       } catch (Exception $e) {
         return response()->json([
           'error' => true,
