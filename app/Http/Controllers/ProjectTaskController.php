@@ -3,17 +3,17 @@
 namespace CodeProject\Http\Controllers;
 
 use Exception;
-use CodeProject\Repositories\ProjectNoteRepository;
-use CodeProject\Services\ProjectNoteService;
+use CodeProject\Repositories\ProjectTaskRepository;
+use CodeProject\Services\ProjectTaskService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
-class ProjectNoteController extends Controller
+class ProjectTaskController extends Controller
 {
     private $repository;
     private $service;
 
-    public function __construct(ProjectNoteRepository $repository, ProjectNoteService $service)
+    public function __construct(ProjectTaskRepository $repository, ProjectTaskService $service)
     {
       $this->repository = $repository;
       $this->service = $service;
@@ -37,7 +37,7 @@ class ProjectNoteController extends Controller
       } catch (Exception $e) {
         return response()->json([
           'error' => true,
-          'message' => 'Nenhuma nota foi encontrada!'
+          'message' => 'Nenhuma tarefa foi encontrada!'
         ]);
       }
     }
@@ -47,24 +47,24 @@ class ProjectNoteController extends Controller
       return $this->service->create($request->all());
     }
 
-    public function update(Request $request, $id, $noteId)
+    public function update(Request $request, $id, $taskId)
     {
-      return $this->service->update($request->all(),$noteId);
+      return $this->service->update($request->all(),$taskId);
     }
 
-    public function show($id, $noteId)
+    public function show($id, $taskId)
     {
       try {
-        return $this->repository->findWhere(['project_id' => $id, 'id' => $noteId]);
+        return $this->repository->findWhere(['project_id' => $id, 'id' => $taskId]);
       } catch (Exception $e) {
         return response()->json([
           'error' => true,
-          'message' => 'A nota não foi encontrada!'
+          'message' => 'A tarefa não foi encontrada!'
         ]);
       }
     }
 
-    public function destroy($id, $noteId)
+    public function destroy($id, $taskId)
     {
       try {
 
@@ -77,14 +77,14 @@ class ProjectNoteController extends Controller
           ];
         }
 
-        $this->repository->delete($noteId);
+        $this->repository->delete($taskId);
         return response()->json([
           'error' => false,
-          'message' => 'A nota foi deletada com sucesso!']);
+          'message' => 'A tarefa foi deletada com sucesso!']);
       } catch (Exception $e) {
         return response()->json([
           'error' => true,
-          'message' => 'Ocorreu um erro ao deletar a nota!'
+          'message' => 'Ocorreu um erro ao deletar a tarefa!'
         ]);
       }
 
