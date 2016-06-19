@@ -5,7 +5,6 @@ namespace CodeProject\Http\Controllers;
 use Exception;
 use CodeProject\Repositories\ProjectNoteRepository;
 use CodeProject\Services\ProjectNoteService;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 class ProjectNoteController extends Controller
@@ -25,20 +24,14 @@ class ProjectNoteController extends Controller
 
         $data = $this->repository->findWhere(['project_id' => $id]);
 
-        if (count($data) == 0) {
-          return response()->json([
-            'error' => true,
-            'message' => 'Registro não encontrado.'
-          ]);
+        if ($data->isEmpty()) {
+          return msgResourceNotFound();
         } else {
           return $data;
         }
 
       } catch (Exception $e) {
-        return response()->json([
-          'error' => true,
-          'message' => 'Nenhuma nota foi encontrada!'
-        ]);
+        return msgException($e);
       }
     }
 
@@ -55,12 +48,15 @@ class ProjectNoteController extends Controller
     public function show($id, $noteId)
     {
       try {
-        return $this->repository->findWhere(['project_id' => $id, 'id' => $noteId]);
+        $data = $this->repository->findWhere(['project_id' => $id, 'id' => $noteId]);
+
+        if ($data->isEmpty()) {
+          return msgResourceNotFound();
+        } else {
+          return $data;
+        }
       } catch (Exception $e) {
-        return response()->json([
-          'error' => true,
-          'message' => 'A nota não foi encontrada!'
-        ]);
+        return msgException($e);
       }
     }
 
@@ -68,26 +64,19 @@ class ProjectNoteController extends Controller
     {
       try {
 
-        try {
-          $this->repository->find($id);
-        } catch (ModelNotFoundException $e){
-          return [
-            'error' => true,
-            'message' => 'Registro não encontrado.'
-          ];
+        if($data = $this->repository->findWhere(['project_id' => $id, 'id' => $noteId])->first()){
+          if($data->delete()){
+            return msgDeleted();
+          }else{
+            return msgNotDeleted();
+          }
+        }else{
+          return msgResourceNotFound();
         }
 
-        $this->repository->delete($noteId);
-        return response()->json([
-          'error' => false,
-          'message' => 'A nota foi deletada com sucesso!']);
       } catch (Exception $e) {
-        return response()->json([
-          'error' => true,
-          'message' => 'Ocorreu um erro ao deletar a nota!'
-        ]);
+        return msgException($e);
       }
-
     }
 
 }

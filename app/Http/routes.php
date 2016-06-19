@@ -33,6 +33,11 @@ Route::get('project/{id}/task/{taskId}', 'ProjectTaskController@show');
 Route::put('project/{id}/task/{taskId}', 'ProjectTaskController@update');
 Route::delete('project/{id}/task/{taskId}', 'ProjectTaskController@destroy');
 
+Route::get('project/{id}/member', 'ProjectController@showMembers');
+Route::get('project/{id}/member/{memberId}', 'ProjectController@showMember');
+Route::put('project/{id}/member/{memberId}', 'ProjectController@addMember');
+Route::delete('project/{id}/member/{memberId}', 'ProjectController@removeMember');
+
 Route::get('project', 'ProjectController@index');
 Route::post('project', 'ProjectController@store');
 Route::put('project/{id}', 'ProjectController@update');

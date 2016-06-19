@@ -23,7 +23,10 @@
         ],
         "psr-4": {
             "CodeProject\\": "app/"
-        }
+        },
+        "files": [
+          "app/Helpers/Helper.php"
+        ]
     },
     "autoload-dev": {
         "classmap": [

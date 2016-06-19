@@ -5,7 +5,6 @@ namespace CodeProject\Http\Controllers;
 use Exception;
 use CodeProject\Repositories\ProjectRepository;
 use CodeProject\Services\ProjectService;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller
@@ -24,10 +23,7 @@ class ProjectController extends Controller
       try {
         return $this->repository->with(['owner','client'])->all();
       } catch (Exception $e) {
-        return response()->json([
-          'error' => true,
-          'message' => 'Nenhum projeto foi encontrado!'
-        ]);
+        return msgResourceNotFound();
       }
     }
 
@@ -44,37 +40,66 @@ class ProjectController extends Controller
     public function show($id)
     {
       try {
-        return $this->repository->with(['owner','client'])->find($id);
+        return $this->repository->with(['owner','client','members'])->find($id);
       } catch (Exception $e) {
-        return response()->json([
-          'error' => true,
-          'message' => 'O projeto não foi encontrado!'
-        ]);
+        return msgResourceNotFound();
       }
+    }
+
+    public function showMembers($id)
+    {
+      try {
+
+        $data = $this->repository->find($id);
+
+        if($data->members->isEmpty()){
+          return msgResourceNotFound();
+        }
+        return $data->members;
+
+      } catch (Exception $e) {
+        return msgException($e);
+      }
+    }
+
+    public function showMember($id,$memberId)
+    {
+      try {
+
+        $data = $this->repository->find($id);
+
+        foreach ($data->members as $member) {
+          if ($member->id == $memberId){
+            return $member;
+          }
+        }
+        return msgResourceNotFound();
+
+      } catch (Exception $e) {
+        return msgException($e);
+      }
+    }
+
+    public function addMember($id,$memberId)
+    {
+      return $this->service->addMember($id,$memberId);
+    }
+
+    public function removeMember($id,$memberId)
+    {
+      return $this->service->removeMember($id,$memberId);
     }
 
     public function destroy($id)
     {
       try {
 
-        try {
-          $this->repository->find($id);
-        } catch (ModelNotFoundException $e){
-          return [
-            'error' => true,
-            'message' => 'Registro não encontrado.'
-          ];
-        }
+        $object = $this->repository->find($id);
+        $object->delete();
+        return successJson('O projeto foi deletado com sucesso!');
 
-        $this->repository->delete($id);
-        return response()->json([
-          'error' => false,
-          'message' => 'O projeto foi deletado com sucesso!']);
       } catch (Exception $e) {
-        return response()->json([
-          'error' => true,
-          'message' => 'Ocorreu um erro ao deletar o projeto!'
-        ]);
+        return msgException($e);
       }
 
     }

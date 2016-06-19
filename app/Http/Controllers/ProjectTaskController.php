@@ -80,7 +80,9 @@ class ProjectTaskController extends Controller
         $this->repository->delete($taskId);
         return response()->json([
           'error' => false,
-          'message' => 'A tarefa foi deletada com sucesso!']);
+          'message' => 'A tarefa foi deletada com sucesso!'
+        ]);
+
       } catch (Exception $e) {
         return response()->json([
           'error' => true,
