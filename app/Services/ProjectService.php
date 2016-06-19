@@ -29,8 +29,10 @@ class ProjectService
   {
 
     try {
+
       $this->validator->with($data)->passesOrFail();
       return $this->repository->create($data);
+      
     } catch (Exception $e) {
       return msgException($e);
     }

@@ -22,12 +22,12 @@ class ProjectNoteController extends Controller
     {
       try {
 
-        $data = $this->repository->findWhere(['project_id' => $id]);
+        $group = $this->repository->findWhere(['project_id' => $id]);
 
-        if ($data->isEmpty()) {
+        if ($group->isEmpty()) {
           return msgResourceNotFound();
         } else {
-          return $data;
+          return $group;
         }
 
       } catch (Exception $e) {
@@ -48,12 +48,12 @@ class ProjectNoteController extends Controller
     public function show($id, $noteId)
     {
       try {
-        $data = $this->repository->findWhere(['project_id' => $id, 'id' => $noteId]);
+        $group = $this->repository->findWhere(['project_id' => $id, 'id' => $noteId]);
 
-        if ($data->isEmpty()) {
+        if ($group->isEmpty()) {
           return msgResourceNotFound();
         } else {
-          return $data;
+          return $group;
         }
       } catch (Exception $e) {
         return msgException($e);
@@ -64,14 +64,14 @@ class ProjectNoteController extends Controller
     {
       try {
 
-        if($data = $this->repository->findWhere(['project_id' => $id, 'id' => $noteId])->first()){
-          if($data->delete()){
-            return msgDeleted();
-          }else{
-            return msgNotDeleted();
-          }
-        }else{
+        $group = $this->repository->findWhere(['project_id' => $id, 'id' => $noteId]);
+
+        if($group->isEmpty()){
           return msgResourceNotFound();
+        }else{
+          $object = $group->first();
+          $object->delete();
+          return msgDeleted();
         }
 
       } catch (Exception $e) {

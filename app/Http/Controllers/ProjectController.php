@@ -96,7 +96,7 @@ class ProjectController extends Controller
 
         $object = $this->repository->find($id);
         $object->delete();
-        return successJson('O projeto foi deletado com sucesso!');
+        return msgDeleted();
 
       } catch (Exception $e) {
         return msgException($e);

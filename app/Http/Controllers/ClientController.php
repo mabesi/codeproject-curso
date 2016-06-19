@@ -24,10 +24,7 @@ class ClientController extends Controller
       try {
         return $this->repository->all();
       } catch (Exception $e) {
-        return response()->json([
-          'error' => true,
-          'message' => 'Nenhum cliente foi encontrado!'
-        ]);
+        return msgResourceNotFound();
       }
     }
 
@@ -46,10 +43,7 @@ class ClientController extends Controller
       try {
         return $this->repository->find($id);
       } catch (Exception $e) {
-        return response()->json([
-          'error' => true,
-          'message' => 'O cliente não foi encontrado!'
-        ]);
+        return msgResourceNotFound();
       }
     }
 
@@ -57,24 +51,12 @@ class ClientController extends Controller
     {
       try {
 
-        try {
-          $this->repository->find($id);
-        } catch (ModelNotFoundException $e){
-          return [
-            'error' => true,
-            'message' => 'Registro não encontrado.'
-          ];
-        }
-
-        $this->repository->delete($id);
-        return response()->json([
-          'error' => false,
-          'message' => 'O cliente foi deletado com sucesso!']);
+        $object = $this->repository->find($id);
+        $object->delete();
+        return msgDeleted();
+        
       } catch (Exception $e) {
-        return response()->json([
-          'error' => true,
-          'message' => 'Ocorreu um erro ao deletar o cliente!'
-        ]);
+        return msgException($e);
       }
 
     }

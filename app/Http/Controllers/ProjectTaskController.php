@@ -23,22 +23,16 @@ class ProjectTaskController extends Controller
     {
       try {
 
-        $data = $this->repository->findWhere(['project_id' => $id]);
+        $group = $this->repository->findWhere(['project_id' => $id]);
 
-        if (count($data) == 0) {
-          return response()->json([
-            'error' => true,
-            'message' => 'Registro não encontrado.'
-          ]);
+        if ($group->isEmpty()) {
+          return msgResourceNotFound();
         } else {
-          return $data;
+          return $group;
         }
 
       } catch (Exception $e) {
-        return response()->json([
-          'error' => true,
-          'message' => 'Nenhuma tarefa foi encontrada!'
-        ]);
+        return msgException($e);
       }
     }
 
@@ -55,12 +49,17 @@ class ProjectTaskController extends Controller
     public function show($id, $taskId)
     {
       try {
-        return $this->repository->findWhere(['project_id' => $id, 'id' => $taskId]);
+
+        $group = $this->repository->findWhere(['project_id' => $id, 'id' => $taskId]);
+
+        if($group->isEmpty()){
+          return msgResourceNotFound();
+        }else {
+          return $group;
+        }
+
       } catch (Exception $e) {
-        return response()->json([
-          'error' => true,
-          'message' => 'A tarefa não foi encontrada!'
-        ]);
+        return msgException($e);
       }
     }
 
@@ -68,28 +67,18 @@ class ProjectTaskController extends Controller
     {
       try {
 
-        try {
-          $this->repository->find($id);
-        } catch (ModelNotFoundException $e){
-          return [
-            'error' => true,
-            'message' => 'Registro não encontrado.'
-          ];
+        $group = $this->repository->findWhere(['project_id' => $id, 'id' => $taskId]);
+        if($group->isEmpty()){
+          return msgResourceNotFound();
+        }else{
+          $object = $group->first();
+          $object->delete();
+          return msgDeleted();
         }
 
-        $this->repository->delete($taskId);
-        return response()->json([
-          'error' => false,
-          'message' => 'A tarefa foi deletada com sucesso!'
-        ]);
-
       } catch (Exception $e) {
-        return response()->json([
-          'error' => true,
-          'message' => 'Ocorreu um erro ao deletar a tarefa!'
-        ]);
+        return msgException($e);
       }
-
     }
 
-}
+}//End of class

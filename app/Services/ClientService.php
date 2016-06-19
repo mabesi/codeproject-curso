@@ -1,10 +1,9 @@
 <?php
 
 namespace CodeProject\Services;
+use Exception;
 use CodeProject\Repositories\ClientRepository;
 use CodeProject\Validators\ClientValidator;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Prettus\Validator\Exceptions\ValidatorException;
 
 class ClientService
 {
@@ -29,13 +28,12 @@ class ClientService
   {
 
     try {
+
       $this->validator->with($data)->passesOrFail();
       return $this->repository->create($data);
-    } catch (ValidatorException $e) {
-      return [
-        'error' => true,
-        'message' => $e->getMessageBag()
-      ];
+      
+    } catch (Exception $e) {
+      return msgException($e,true);
     }
 
   }
@@ -44,23 +42,13 @@ class ClientService
   {
     try {
 
-      try {
-        $this->repository->find($id);
-      } catch (ModelNotFoundException $e){
-        return [
-          'error' => true,
-          'message' => 'Registro não encontrado.'
-        ];
-      }
-
+      $this->repository->find($id);
       $this->validator->with($data)->passesOrFail();
       $this->repository->update($data, $id);
       return $this->repository->find($id);
-    } catch (ValidatorException $e) {
-      return [
-        'error' => true,
-        'message' => $e->getMessageBag()
-      ];
+
+    } catch (Exception $e) {
+      return msgException($e,true);
     }
   }
 

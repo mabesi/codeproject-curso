@@ -70,6 +70,12 @@ function msgException($e,$showOriginalMessage = false)
     }else{
       return errorJson('Exceção: Erro ao tentar validar os dados!');
     }
+  //}elseif($e instanceof NoActiveAccessTokenException){
+  //  if($showOriginalMessage){
+  //    return errorJson($e->getMessageBag());
+  //  }else{
+  //    return errorJson('Exceção: Erro de autenticação/Usuário não logado!');
+  //  }
   } else {
     if($showOriginalMessage){
       return errorJson($e->getMessage());
