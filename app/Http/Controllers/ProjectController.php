@@ -6,6 +6,7 @@ use Exception;
 use CodeProject\Repositories\ProjectRepository;
 use CodeProject\Services\ProjectService;
 use Illuminate\Http\Request;
+use Authorizer;
 
 class ProjectController extends Controller
 {
@@ -40,7 +41,13 @@ class ProjectController extends Controller
     public function show($id)
     {
       try {
-        return $this->repository->with(['owner','client','members'])->find($id);
+
+        if ($this->checkProjectPermissions($id)){
+          return $this->repository->with(['owner','client','members'])->find($id);
+        } else {
+          return msgAccessDenied();
+        }
+
       } catch (Exception $e) {
         return msgResourceNotFound();
       }
@@ -104,4 +111,21 @@ class ProjectController extends Controller
 
     }
 
-}
+    public function checkProjectMember($id)
+    {
+      $memberId = userId();
+      return $this->service->isMember($id,$memberId);
+    }
+
+    public function checkProjectOwner($id)
+    {
+      $ownerId = userId();
+      return $this->service->isOwner($id,$ownerId);
+    }
+
+    public function checkProjectPermissions($id)
+    {
+      return $this->checkProjectOwner($id) || $this->checkProjectMember($id);
+    }
+
+} // End of class

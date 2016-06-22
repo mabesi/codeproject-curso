@@ -1,4 +1,26 @@
 <?php
+use CodeProject\Entities\User;
+
+function userId()
+{
+  return \Authorizer::getResourceOwnerId();
+}
+
+function currentUser()
+{
+  $user = User::find(userId());
+  return $user;
+}
+
+function currentUserName()
+{
+  return currentUser()->name;
+}
+
+function currentUserEmail()
+{
+  return currentUser()->email;
+}
 
 function msgJson($msg,$error)
 {
@@ -26,6 +48,11 @@ function msgError()
 function msgResourceNotFound()
 {
   return errorJson('Nenhum registro encontrado!');
+}
+
+function msgAccessDenied()
+{
+  return errorJson('Acesso negado!');
 }
 
 function msgDeleted()

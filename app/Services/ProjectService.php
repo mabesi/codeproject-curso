@@ -32,7 +32,7 @@ class ProjectService
 
       $this->validator->with($data)->passesOrFail();
       return $this->repository->create($data);
-      
+
     } catch (Exception $e) {
       return msgException($e);
     }
@@ -108,6 +108,24 @@ class ProjectService
           return true;
         }
       }
+      return false;
+
+    } catch (Exception $e) {
+      return false;
+    }
+  }
+
+  public function isOwner($id,$ownerId)
+  {
+    try {
+
+      $object = $this->repository->find($id);
+      $owner = $object->owner;
+
+      if($owner->id == $ownerId){
+        return true;
+      }
+
       return false;
 
     } catch (Exception $e) {
