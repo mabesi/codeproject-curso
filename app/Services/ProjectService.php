@@ -101,7 +101,7 @@ class ProjectService
   {
     try {
 
-      $object = $this->repository->find($id);
+      $object = $this->repository->skipPresenter()->find($id);
 
       foreach($object->members as $member){
         if($member->id == $memberId){
@@ -119,7 +119,7 @@ class ProjectService
   {
     try {
 
-      $object = $this->repository->find($id);
+      $object = $this->repository->skipPresenter()->find($id);
       $owner = $object->owner;
 
       if($owner->id == $ownerId){

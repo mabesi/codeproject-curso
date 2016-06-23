@@ -6,7 +6,6 @@ use Exception;
 use CodeProject\Repositories\ProjectRepository;
 use CodeProject\Services\ProjectService;
 use Illuminate\Http\Request;
-use Authorizer;
 
 class ProjectController extends Controller
 {
