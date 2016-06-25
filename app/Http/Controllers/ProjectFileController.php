@@ -6,8 +6,6 @@ use Exception;
 use CodeProject\Repositories\ProjectRepository;
 use CodeProject\Services\ProjectService;
 use Illuminate\Http\Request;
-use \Storage;
-use \File;
 
 class ProjectFileController extends Controller
 {
@@ -31,10 +29,14 @@ class ProjectFileController extends Controller
 
     public function store(Request $request)
     {
-      $file = $request->file('file');
-      $extension = $file->getClientOriginalExtension();
 
-      Storage::put($request->name.'.'.$extension, File::get($file));
+      $data['file'] = $request->file('file');
+      $data['extension'] = $data['file']->getClientOriginalExtension();
+      $data['name'] = $request->name;
+      $data['project_id'] = $request->project_id;
+      $data['description'] = $request->description;
+
+      $this->service->createFile($data);
 
     }
 
