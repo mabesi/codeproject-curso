@@ -6,8 +6,7 @@ use Exception;
 use CodeProject\Repositories\ProjectRepository;
 use CodeProject\Validators\ProjectValidator;
 
-use Illuminate\Filesystem\Filesystem;
-use Illuminate\Contracts\Filesystem\Factory as Storage;
+
 
 class ProjectService
 {
@@ -22,22 +21,11 @@ class ProjectService
    */
   protected $validator;
 
-  /**
-   * @var Filesystem
-   */
-  protected $filesystem;
 
-  /**
-   * @var Storage
-   */
-  protected $storage;
-
-  public function __construct(ProjectRepository $repository, ProjectValidator $validator, Filesystem $filesystem, Storage $storage)
+  public function __construct(ProjectRepository $repository, ProjectValidator $validator)
   {
     $this->repository = $repository;
     $this->validator = $validator;
-    $this->filesystem = $filesystem;
-    $this->storage = $storage;
   }
 
   public function create(array $data)
@@ -58,7 +46,7 @@ class ProjectService
   {
     try {
 
-      $this->repository->find($id);
+      $this->repository->skipPresenter()->find($id);
       $this->validator->with($data)->passesOrFail();
       $this->repository->update($data, $id);
       return $this->repository->find($id);
@@ -146,14 +134,6 @@ class ProjectService
     } catch (Exception $e) {
       return false;
     }
-  }
-
-  public function createFile($data)
-  {
-    $project = $this->repository->skipPresenter()->find($data['project_id']);
-    $projectFile = $project->files()->create($data);
-
-    $this->storage->put($projectFile->id.'.'.$data['extension'], $this->filesystem->get($data['file']));
   }
 
 }// End of class

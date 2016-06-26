@@ -3,8 +3,8 @@
 namespace CodeProject\Http\Controllers;
 
 use Exception;
-use CodeProject\Repositories\ProjectRepository;
-use CodeProject\Services\ProjectService;
+use CodeProject\Repositories\ProjectFileRepository;
+use CodeProject\Services\ProjectFileService;
 use Illuminate\Http\Request;
 
 class ProjectFileController extends Controller
@@ -12,127 +12,81 @@ class ProjectFileController extends Controller
     private $repository;
     private $service;
 
-    public function __construct(ProjectRepository $repository, ProjectService $service)
+    public function __construct(ProjectFileRepository $repository, ProjectFileService $service)
     {
       $this->repository = $repository;
       $this->service = $service;
     }
 
-    public function index()
+    public function index($id)
     {
       try {
-        return $this->repository->with(['owner','client'])->all();
+
+        $group = $this->repository->findWhere(['project_id' => $id]);
+
+        if ($group->isEmpty()) {
+          return msgResourceNotFound();
+        } else {
+          return $group;
+        }
+
       } catch (Exception $e) {
-        return msgResourceNotFound();
+        return msgException($e);
       }
     }
 
-    public function store(Request $request)
+    public function store(Request $request, $id)
     {
-
+      $data['project_id'] = $id;
       $data['file'] = $request->file('file');
       $data['extension'] = $data['file']->getClientOriginalExtension();
       $data['name'] = $request->name;
-      $data['project_id'] = $request->project_id;
       $data['description'] = $request->description;
 
-      $this->service->createFile($data);
-
+      return $this->service->create($data);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id, $fileId)
     {
-      return $this->service->update($request->all(),$id);
+      return $this->service->update($request->all(),$fileId);
     }
 
-    public function show($id)
-    {
-      try {
-
-        if ($this->checkProjectPermissions($id)){
-          return $this->repository->with(['owner','client','members'])->find($id);
-        } else {
-          return msgAccessDenied();
-        }
-
-      } catch (Exception $e) {
-        return msgResourceNotFound();
-      }
-    }
-
-    public function showMembers($id)
+    public function show($id, $fileId)
     {
       try {
+        $group = $this->repository->findWhere(['project_id' => $id, 'id' => $fileId]);
 
-        $data = $this->repository->find($id);
-
-        if($data->members->isEmpty()){
+        if ($group->isEmpty()) {
           return msgResourceNotFound();
+        } else {
+          return $group;
         }
-        return $data->members;
-
       } catch (Exception $e) {
         return msgException($e);
       }
     }
 
-    public function showMember($id,$memberId)
+    public function destroy($id, $fileId)
     {
       try {
 
-        $data = $this->repository->find($id);
+        $group = $this->repository->findWhere(['project_id' => $id, 'id' => $fileId]);
 
-        foreach ($data->members as $member) {
-          if ($member->id == $memberId){
-            return $member;
+        if($group->isEmpty()){
+          return msgResourceNotFound();
+        }else{
+          $object = $group->first();
+          if ($this->service->deleteFile($object->id.'.'.$object->extension)){
+            $object->delete();
+            return msgDeleted();
+          } else {
+            return msgNotDeleted();
           }
         }
-        return msgResourceNotFound();
 
       } catch (Exception $e) {
         return msgException($e);
       }
     }
 
-    public function addMember($id,$memberId)
-    {
-      return $this->service->addMember($id,$memberId);
-    }
-
-    public function removeMember($id,$memberId)
-    {
-      return $this->service->removeMember($id,$memberId);
-    }
-
-    public function destroy($id)
-    {
-      try {
-
-        $object = $this->repository->find($id);
-        $object->delete();
-        return msgDeleted();
-
-      } catch (Exception $e) {
-        return msgException($e);
-      }
-
-    }
-
-    public function checkProjectMember($id)
-    {
-      $memberId = userId();
-      return $this->service->isMember($id,$memberId);
-    }
-
-    public function checkProjectOwner($id)
-    {
-      $ownerId = userId();
-      return $this->service->isOwner($id,$ownerId);
-    }
-
-    public function checkProjectPermissions($id)
-    {
-      return $this->checkProjectOwner($id) || $this->checkProjectMember($id);
-    }
-
-} // End of class
+}

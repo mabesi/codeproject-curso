@@ -31,7 +31,7 @@ class ClientService
 
       $this->validator->with($data)->passesOrFail();
       return $this->repository->create($data);
-      
+
     } catch (Exception $e) {
       return msgException($e,true);
     }
@@ -42,7 +42,7 @@ class ClientService
   {
     try {
 
-      $this->repository->find($id);
+      $this->repository->skipPresenter()->find($id);
       $this->validator->with($data)->passesOrFail();
       $this->repository->update($data, $id);
       return $this->repository->find($id);

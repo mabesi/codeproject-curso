@@ -23,7 +23,11 @@ Route::group(['middleware' => 'oauth'], function(){
 
   Route::resource('client','ClientController',['except' => ['create','edit']]);
 
+  Route::get('project/{id}/file', 'ProjectFileController@index');
   Route::post('project/{id}/file', 'ProjectFileController@store');
+  Route::get('project/{id}/file/{fileId}', 'ProjectFileController@show');
+  Route::put('project/{id}/file/{fileId}', 'ProjectFileController@update');
+  Route::delete('project/{id}/file/{fileId}', 'ProjectFileController@destroy');
 
   Route::get('project/{id}/note', 'ProjectNoteController@index');
   Route::post('project/{id}/note', 'ProjectNoteController@store');

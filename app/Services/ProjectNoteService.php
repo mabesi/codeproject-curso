@@ -42,7 +42,7 @@ class ProjectNoteService
   {
     try {
 
-      $this->repository->find($id);
+      $this->repository->skipPresenter()->find($id);
       $this->validator->with($data)->passesOrFail();
       $this->repository->update($data, $id);
       return $this->repository->find($id);
