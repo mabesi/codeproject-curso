@@ -30,7 +30,9 @@ class ProjectNoteService
     try {
 
       $this->validator->with($data)->passesOrFail();
-      return $this->repository->create($data);
+      $group = $this->repository->create($data);
+
+      return $group['data'];
 
     } catch (Exception $e) {
       return msgException($e,true);
@@ -42,10 +44,12 @@ class ProjectNoteService
   {
     try {
 
-      $this->repository->skipPresenter()->find($id);
+      $this->repository->find($id);
       $this->validator->with($data)->passesOrFail();
       $this->repository->update($data, $id);
-      return $this->repository->find($id);
+      $group = $this->repository->find($id);
+
+      return $group['data'];
 
     } catch (Exception $e) {
       return msgException($e,true);

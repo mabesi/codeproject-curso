@@ -9,7 +9,7 @@ class ProjectFileValidator extends LaravelValidator
   protected $rules = [
 
     'name' => 'required',
-    'file' => 'required|mimes:doc,xls,docx,xlsx,odt,ods,ppt,pptx,odp,pdf,jpg,jpeg,png,bmp,gif',
+    'file' => 'mimes:doc,xls,docx,xlsx,odt,ods,ppt,pptx,odp,pdf,jpg,jpeg,png,bmp,gif',
 
   ];
 

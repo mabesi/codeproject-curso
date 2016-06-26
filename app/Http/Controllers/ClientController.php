@@ -5,7 +5,6 @@ namespace CodeProject\Http\Controllers;
 use Exception;
 use CodeProject\Repositories\ClientRepository;
 use CodeProject\Services\ClientService;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 class ClientController extends Controller
@@ -22,7 +21,13 @@ class ClientController extends Controller
     public function index()
     {
       try {
-        return $this->repository->all();
+
+        $group = $this->repository->all();
+        if(count($group['data'])==0){
+          return msgResourceNotFound();
+        }
+        return $group['data'];
+
       } catch (Exception $e) {
         return msgResourceNotFound();
       }
@@ -41,7 +46,11 @@ class ClientController extends Controller
     public function show($id)
     {
       try {
-        return $this->repository->find($id);
+        $group = $this->repository->find($id);
+        if(count($group['data'])==0){
+          return msgResourceNotFound();
+        }
+        return $group['data'];
       } catch (Exception $e) {
         return msgResourceNotFound();
       }
@@ -51,10 +60,10 @@ class ClientController extends Controller
     {
       try {
 
-        $object = $this->repository->find($id);
+        $object = $this->repository->skipPresenter()->find($id);
         $object->delete();
         return msgDeleted();
-        
+
       } catch (Exception $e) {
         return msgException($e);
       }

@@ -24,10 +24,10 @@ class ProjectNoteController extends Controller
 
         $group = $this->repository->findWhere(['project_id' => $id]);
 
-        if ($group->isEmpty()) {
+        if (count($group['data'])==0) {
           return msgResourceNotFound();
         } else {
-          return $group;
+          return $group['data'];
         }
 
       } catch (Exception $e) {
@@ -50,10 +50,10 @@ class ProjectNoteController extends Controller
       try {
         $group = $this->repository->findWhere(['project_id' => $id, 'id' => $noteId]);
 
-        if ($group->isEmpty()) {
+        if (count($group['data'])==0) {
           return msgResourceNotFound();
         } else {
-          return $group;
+          return $group['data'];
         }
       } catch (Exception $e) {
         return msgException($e);
@@ -64,7 +64,7 @@ class ProjectNoteController extends Controller
     {
       try {
 
-        $group = $this->repository->findWhere(['project_id' => $id, 'id' => $noteId]);
+        $group = $this->repository->skipPresenter()->findWhere(['project_id' => $id, 'id' => $noteId]);
 
         if($group->isEmpty()){
           return msgResourceNotFound();

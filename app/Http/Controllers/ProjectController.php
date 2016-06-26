@@ -21,7 +21,13 @@ class ProjectController extends Controller
     public function index()
     {
       try {
-        return $this->repository->with(['owner','client'])->all();
+
+        $group = $this->repository->myProjectList();
+        if (count($group['data'])==0) {
+          return msgResourceNotFound();
+        }
+        return $group['data'];
+
       } catch (Exception $e) {
         return msgResourceNotFound();
       }
@@ -42,7 +48,13 @@ class ProjectController extends Controller
       try {
 
         if ($this->checkProjectPermissions($id)){
-          return $this->repository->with(['owner','client','members'])->find($id);
+
+          $group = $this->repository->with(['owner','client','members'])->find($id);
+          if (count($group['data'])==0) {
+            return msgResourceNotFound();
+          }
+          return $group['data'];
+
         } else {
           return msgAccessDenied();
         }
@@ -56,7 +68,7 @@ class ProjectController extends Controller
     {
       try {
 
-        $data = $this->repository->find($id);
+        $data = $this->repository->skipPresenter()->find($id);
 
         if($data->members->isEmpty()){
           return msgResourceNotFound();
@@ -72,7 +84,7 @@ class ProjectController extends Controller
     {
       try {
 
-        $data = $this->repository->find($id);
+        $data = $this->repository->skipPresenter()->find($id);
 
         foreach ($data->members as $member) {
           if ($member->id == $memberId){
@@ -100,7 +112,7 @@ class ProjectController extends Controller
     {
       try {
 
-        $object = $this->repository->find($id);
+        $object = $this->repository->skipPresenter()->find($id);
         $object->delete();
         return msgDeleted();
 

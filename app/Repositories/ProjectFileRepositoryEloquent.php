@@ -2,6 +2,7 @@
 
 namespace CodeProject\Repositories;
 
+use CodeProject\Presenters\ProjectFilePresenter;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Criteria\RequestCriteria;
 use CodeProject\Repositories\ProjectFileRepository;
@@ -29,6 +30,11 @@ class ProjectFileRepositoryEloquent extends BaseRepository implements ProjectFil
     public function boot()
     {
         $this->pushCriteria(app(RequestCriteria::class));
+    }
+
+    public function presenter()
+    {
+      return ProjectFilePresenter::class;
     }
 
 }

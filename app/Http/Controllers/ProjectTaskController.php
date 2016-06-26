@@ -5,7 +5,6 @@ namespace CodeProject\Http\Controllers;
 use Exception;
 use CodeProject\Repositories\ProjectTaskRepository;
 use CodeProject\Services\ProjectTaskService;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 class ProjectTaskController extends Controller
@@ -25,10 +24,10 @@ class ProjectTaskController extends Controller
 
         $group = $this->repository->findWhere(['project_id' => $id]);
 
-        if ($group->isEmpty()) {
+        if (count($group['data'])==0) {
           return msgResourceNotFound();
         } else {
-          return $group;
+          return $group['data'];
         }
 
       } catch (Exception $e) {
@@ -52,10 +51,10 @@ class ProjectTaskController extends Controller
 
         $group = $this->repository->findWhere(['project_id' => $id, 'id' => $taskId]);
 
-        if($group->isEmpty()){
+        if(count($group['data'])==0){
           return msgResourceNotFound();
         }else {
-          return $group;
+          return $group['data'];
         }
 
       } catch (Exception $e) {
@@ -67,7 +66,7 @@ class ProjectTaskController extends Controller
     {
       try {
 
-        $group = $this->repository->findWhere(['project_id' => $id, 'id' => $taskId]);
+        $group = $this->repository->skipPresenter()->findWhere(['project_id' => $id, 'id' => $taskId]);
         if($group->isEmpty()){
           return msgResourceNotFound();
         }else{

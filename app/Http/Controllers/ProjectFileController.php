@@ -24,7 +24,7 @@ class ProjectFileController extends Controller
 
         $group = $this->repository->findWhere(['project_id' => $id]);
 
-        if ($group->isEmpty()) {
+        if (count($group['data'])==0) {
           return msgResourceNotFound();
         } else {
           return $group;
@@ -56,7 +56,7 @@ class ProjectFileController extends Controller
       try {
         $group = $this->repository->findWhere(['project_id' => $id, 'id' => $fileId]);
 
-        if ($group->isEmpty()) {
+        if (count($group['data'])==0) {
           return msgResourceNotFound();
         } else {
           return $group;
@@ -70,7 +70,7 @@ class ProjectFileController extends Controller
     {
       try {
 
-        $group = $this->repository->findWhere(['project_id' => $id, 'id' => $fileId]);
+        $group = $this->repository->skipPresenter()->findWhere(['project_id' => $id, 'id' => $fileId]);
 
         if($group->isEmpty()){
           return msgResourceNotFound();

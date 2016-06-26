@@ -46,10 +46,12 @@ class ProjectFileService
     try {
 
       $this->validator->with($data)->passesOrFail();
-      $projectFile = $this->repository->create($data);
+      $projectFile = $this->repository->skipPresenter()->create($data);
       $this->storage->put($projectFile->id.'.'.$data['extension'], $this->filesystem->get($data['file']));
 
-      return $projectFile;
+      $group = $this->repository->skipPresenter(false)->find($projectFile->id);
+
+      return $group['data'];
 
     } catch (Exception $e) {
       return msgException($e,true);
@@ -61,10 +63,12 @@ class ProjectFileService
   {
     try {
 
-      $this->repository->skipPresenter()->find($id);
+      $this->repository->find($id);
       $this->validator->with($data)->passesOrFail();
       $this->repository->update($data, $id);
-      return $this->repository->find($id);
+      $group = $this->repository->find($id);
+
+      return $group['data'];
 
     } catch (Exception $e) {
       return msgException($e,true);
