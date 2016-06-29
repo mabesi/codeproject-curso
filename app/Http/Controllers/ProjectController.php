@@ -40,6 +40,10 @@ class ProjectController extends Controller
 
     public function update(Request $request, $id)
     {
+      if (!$this->repository->checkProjectPermissions($id)){
+        return msgAccessDenied();
+      }
+
       return $this->service->update($request->all(),$id);
     }
 
@@ -47,17 +51,16 @@ class ProjectController extends Controller
     {
       try {
 
-        if ($this->checkProjectPermissions($id)){
-
-          $group = $this->repository->with(['owner','client','members'])->find($id);
-          if (count($group['data'])==0) {
-            return msgResourceNotFound();
-          }
-          return $group['data'];
-
-        } else {
+        if (!$this->repository->checkProjectPermissions($id)){
           return msgAccessDenied();
         }
+
+        $group = $this->repository->with(['owner','client','members'])->skipPresenter(false)->find($id);
+
+        if (count($group['data'])==0) {
+          return msgResourceNotFound();
+        }
+        return $group['data'];
 
       } catch (Exception $e) {
         return msgResourceNotFound();
@@ -67,6 +70,10 @@ class ProjectController extends Controller
     public function showMembers($id)
     {
       try {
+
+        if (!$this->repository->checkProjectPermissions($id)){
+          return msgAccessDenied();
+        }
 
         $data = $this->repository->skipPresenter()->find($id);
 
@@ -84,6 +91,10 @@ class ProjectController extends Controller
     {
       try {
 
+        if (!$this->repository->checkProjectPermissions($id)){
+          return msgAccessDenied();
+        }
+
         $data = $this->repository->skipPresenter()->find($id);
 
         foreach ($data->members as $member) {
@@ -100,17 +111,29 @@ class ProjectController extends Controller
 
     public function addMember($id,$memberId)
     {
+      if (!$this->repository->checkProjectOwner($id)){
+        return msgAccessDenied();
+      }
+
       return $this->service->addMember($id,$memberId);
     }
 
     public function removeMember($id,$memberId)
     {
+      if (!$this->repository->checkProjectOwner($id)){
+        return msgAccessDenied();
+      }
+
       return $this->service->removeMember($id,$memberId);
     }
 
     public function destroy($id)
     {
       try {
+
+        if (!$this->repository->checkProjectOwner($id)){
+          return msgAccessDenied();
+        }
 
         $object = $this->repository->skipPresenter()->find($id);
         $object->delete();
@@ -120,23 +143,6 @@ class ProjectController extends Controller
         return msgException($e);
       }
 
-    }
-
-    public function checkProjectMember($id)
-    {
-      $memberId = userId();
-      return $this->service->isMember($id,$memberId);
-    }
-
-    public function checkProjectOwner($id)
-    {
-      $ownerId = userId();
-      return $this->service->isOwner($id,$ownerId);
-    }
-
-    public function checkProjectPermissions($id)
-    {
-      return $this->checkProjectOwner($id) || $this->checkProjectMember($id);
     }
 
 } // End of class

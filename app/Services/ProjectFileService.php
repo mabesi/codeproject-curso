@@ -8,6 +8,7 @@ use CodeProject\Validators\ProjectFileValidator;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Contracts\Filesystem\Factory as Storage;
+use Prettus\Validator\Contracts\ValidatorInterface;
 
 class ProjectFileService
 {
@@ -45,10 +46,10 @@ class ProjectFileService
   {
     try {
 
-      $this->validator->with($data)->passesOrFail();
+      $this->validator->with($data)->passesOrFail(ValidatorInterface::RULE_CREATE);
+      $data['extension'] = $data['file']->getClientOriginalExtension();
       $projectFile = $this->repository->skipPresenter()->create($data);
       $this->storage->put($projectFile->id.'.'.$data['extension'], $this->filesystem->get($data['file']));
-
       $group = $this->repository->skipPresenter(false)->find($projectFile->id);
 
       return $group['data'];
@@ -64,7 +65,7 @@ class ProjectFileService
     try {
 
       $this->repository->find($id);
-      $this->validator->with($data)->passesOrFail();
+      $this->validator->with($data)->passesOrFail(ValidatorInterface::RULE_UPDATE);
       $this->repository->update($data, $id);
       $group = $this->repository->find($id);
 

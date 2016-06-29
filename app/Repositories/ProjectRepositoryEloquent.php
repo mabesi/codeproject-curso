@@ -2,6 +2,7 @@
 
 namespace CodeProject\Repositories;
 
+use Exception;
 use CodeProject\Presenters\ProjectPresenter;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Criteria\RequestCriteria;
@@ -49,6 +50,59 @@ class ProjectRepositoryEloquent extends BaseRepository implements ProjectReposit
                 })->all();
 
         return $data;
+    }
+
+    public function isMember($id,$memberId)
+    {
+      try {
+
+        $object = $this->skipPresenter()->find($id);
+
+        foreach($object->members as $member){
+          if($member->id == $memberId){
+            return true;
+          }
+        }
+        return false;
+
+      } catch (Exception $e) {
+        return false;
+      }
+    }
+
+    public function isOwner($id,$ownerId)
+    {
+      try {
+
+        $object = $this->skipPresenter()->find($id);
+        $owner = $object->owner;
+
+        if($owner->id == $ownerId){
+          return true;
+        }
+
+        return false;
+
+      } catch (Exception $e) {
+        return false;
+      }
+    }
+
+    public function checkProjectMember($id)
+    {
+      $memberId = userId();
+      return $this->isMember($id,$memberId);
+    }
+
+    public function checkProjectOwner($id)
+    {
+      $ownerId = userId();
+      return $this->isOwner($id,$ownerId);
+    }
+
+    public function checkProjectPermissions($id)
+    {
+      return $this->checkProjectOwner($id) || $this->checkProjectMember($id);
     }
 
 }

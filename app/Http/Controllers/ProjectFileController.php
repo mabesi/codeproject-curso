@@ -3,6 +3,7 @@
 namespace CodeProject\Http\Controllers;
 
 use Exception;
+use CodeProject\Repositories\ProjectRepository;
 use CodeProject\Repositories\ProjectFileRepository;
 use CodeProject\Services\ProjectFileService;
 use Illuminate\Http\Request;
@@ -10,17 +11,23 @@ use Illuminate\Http\Request;
 class ProjectFileController extends Controller
 {
     private $repository;
+    private $projectRepository;
     private $service;
 
-    public function __construct(ProjectFileRepository $repository, ProjectFileService $service)
+    public function __construct(ProjectFileRepository $repository, ProjectFileService $service, ProjectRepository $projectRepository)
     {
       $this->repository = $repository;
+      $this->projectRepository = $projectRepository;
       $this->service = $service;
     }
 
     public function index($id)
     {
       try {
+
+        if (!$this->projectRepository->checkProjectPermissions($id)){
+          return msgAccessDenied();
+        }
 
         $group = $this->repository->findWhere(['project_id' => $id]);
 
@@ -37,9 +44,12 @@ class ProjectFileController extends Controller
 
     public function store(Request $request, $id)
     {
+      if (!$this->projectRepository->checkProjectPermissions($id)){
+        return msgAccessDenied();
+      }
+
       $data['project_id'] = $id;
       $data['file'] = $request->file('file');
-      $data['extension'] = $data['file']->getClientOriginalExtension();
       $data['name'] = $request->name;
       $data['description'] = $request->description;
 
@@ -48,12 +58,21 @@ class ProjectFileController extends Controller
 
     public function update(Request $request, $id, $fileId)
     {
+      if (!$this->projectRepository->checkProjectPermissions($id)){
+        return msgAccessDenied();
+      }
+
       return $this->service->update($request->all(),$fileId);
     }
 
     public function show($id, $fileId)
     {
       try {
+
+        if (!$this->projectRepository->checkProjectPermissions($id)){
+          return msgAccessDenied();
+        }
+
         $group = $this->repository->findWhere(['project_id' => $id, 'id' => $fileId]);
 
         if (count($group['data'])==0) {
@@ -69,6 +88,10 @@ class ProjectFileController extends Controller
     public function destroy($id, $fileId)
     {
       try {
+
+        if (!$this->projectRepository->checkProjectPermissions($id)){
+          return msgAccessDenied();
+        }
 
         $group = $this->repository->skipPresenter()->findWhere(['project_id' => $id, 'id' => $fileId]);
 

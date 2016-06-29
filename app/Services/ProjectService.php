@@ -104,40 +104,4 @@ class ProjectService
     }
   }
 
-  public function isMember($id,$memberId)
-  {
-    try {
-
-      $object = $this->repository->skipPresenter()->find($id);
-
-      foreach($object->members as $member){
-        if($member->id == $memberId){
-          return true;
-        }
-      }
-      return false;
-
-    } catch (Exception $e) {
-      return false;
-    }
-  }
-
-  public function isOwner($id,$ownerId)
-  {
-    try {
-
-      $object = $this->repository->skipPresenter()->find($id);
-      $owner = $object->owner;
-
-      if($owner->id == $ownerId){
-        return true;
-      }
-
-      return false;
-
-    } catch (Exception $e) {
-      return false;
-    }
-  }
-
 }// End of class
