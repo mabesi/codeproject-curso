@@ -24,7 +24,7 @@ class ClientController extends Controller
 
         $group = $this->repository->all();
         if(count($group['data'])==0){
-          return msgResourceNotFound();
+         return msgResourceNotFound();
         }
         return $group['data'];
 

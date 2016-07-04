@@ -1,8 +1,30 @@
-var app = angular.module('app',['ngRoute','angular-oauth2','app.controllers']);
+
+var app = angular.module('app',['ngRoute','angular-oauth2','app.controllers','app.services']);
 
 angular.module('app.controllers',['ngMessages','angular-oauth2']);
 
-app.config(['$routeProvider','OAuthProvider',function($routeProvider,OAuthProvider){
+angular.module('app.services',['ngResource']);
+
+app.provider('appConfig',function(){
+
+  var config = {
+    baseUrl: 'http://curso.kav'
+  }
+
+  return {
+    config: config,
+    $get: function(){
+      return config;
+    }
+  }
+
+});
+
+app.config(['$routeProvider',
+            'OAuthProvider',
+            'appConfigProvider',
+            'OAuthTokenProvider',
+            function($routeProvider,OAuthProvider,appConfigProvider,OAuthTokenProvider){
   $routeProvider
     .when('/home',{
       templateUrl: 'build/views/home.html',
@@ -11,14 +33,60 @@ app.config(['$routeProvider','OAuthProvider',function($routeProvider,OAuthProvid
     .when('/login',{
       templateUrl: 'build/views/login.html',
       controller: 'LoginController'
-    });
+    })
 
+    .when('/clients',{
+      templateUrl: 'build/views/client/list.html',
+      controller: 'ClientListController'
+    })
+    .when('/clients/new',{
+      templateUrl: 'build/views/client/new.html',
+      controller: 'ClientNewController'
+    })
+    .when('/clients/:id/edit',{
+      templateUrl: 'build/views/client/edit.html',
+      controller: 'ClientEditController'
+    })
+    .when('/clients/:id/remove',{
+      templateUrl: 'build/views/client/remove.html',
+      controller: 'ClientRemoveController'
+    })
+
+    .when('/project/:id/notes',{
+      templateUrl: 'build/views/note/list.html',
+      controller: 'NoteListController'
+    })
+    .when('/project/:id/notes/new',{
+      templateUrl: 'build/views/note/new.html',
+      controller: 'NoteNewController'
+    })
+    .when('/project/:id/notes/:noteId',{
+      templateUrl: 'build/views/note/note.html',
+      controller: 'NoteController'
+    })
+    .when('/project/:id/notes/:noteId/edit',{
+      templateUrl: 'build/views/note/edit.html',
+      controller: 'NoteEditController'
+    })
+    .when('/project/:id/notes/:noteId/remove',{
+      templateUrl: 'build/views/note/remove.html',
+      controller: 'NoteRemoveController'
+    })
+    ;
 
     OAuthProvider.configure({
-      baseUrl: 'http://curso.kav',
+      baseUrl: appConfigProvider.config.baseUrl,
       clientId: 'appid1',
       clientSecret: 'secret',
-      grantPath: 'oauth/access_token'
+      grantPath: 'oauth/access_token',
+
+    });
+
+    OAuthTokenProvider.configure({
+      name: 'token',
+      options: {
+        secure: false
+      }
     });
 }]);
 
@@ -35,6 +103,6 @@ app.run(['$rootScope', '$window', 'OAuth', function($rootScope, $window, OAuth) 
       }
 
       // Redirect to `/login` with the `error_reason`.
-      return $window.location.href = '/login?error_reason=' + rejection.data.error;
+      return $window.location.href = '/#/login?error_reason=' + rejection.data.error;
     });
 }]);

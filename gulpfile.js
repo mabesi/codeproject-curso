@@ -39,7 +39,9 @@ config.build_path_html = config.build_path + '/views'
 
 gulp.task('copy-html',function () {
 
-  gulp.src(config.assets_path + '/js/views/**/*.html')
+  gulp.src([
+    config.assets_path + '/js/views/**/*.html'
+  ])
   .pipe(gulp.dest(config.build_path_html))
   .pipe(liveReload());
 
@@ -47,7 +49,9 @@ gulp.task('copy-html',function () {
 
 gulp.task('copy-styles',function(){
 
-  gulp.src(config.assets_path + '/css/**/*.css')
+  gulp.src([
+    config.assets_path + '/css/**/*.css'
+  ])
   .pipe(gulp.dest(config.build_path_css))
   .pipe(liveReload());
 
@@ -59,7 +63,9 @@ gulp.task('copy-styles',function(){
 
 gulp.task('copy-scripts',function(){
 
-  gulp.src(config.assets_path + '/js/**/*.js')
+  gulp.src([
+    config.assets_path + '/js/**/*.js'
+  ])
   .pipe(gulp.dest(config.build_path_js))
   .pipe(liveReload());
 

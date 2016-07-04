@@ -25,9 +25,9 @@ class ProjectNoteController extends Controller
     {
       try {
 
-        if (!$this->projectRepository->checkProjectPermissions($id)){
-          return msgAccessDenied();
-        }
+        // if (!$this->projectRepository->checkProjectPermissions($id)){
+        //   return msgAccessDenied();
+        // }
 
         $group = $this->repository->findWhere(['project_id' => $id]);
 
@@ -45,17 +45,17 @@ class ProjectNoteController extends Controller
     public function store(Request $request)
     {
       $id = $request->project_id;
-      if (!$this->projectRepository->checkProjectPermissions($id)){
-        return msgAccessDenied();
-      }
+      // if (!$this->projectRepository->checkProjectPermissions($id)){
+      //   return msgAccessDenied();
+      // }
       return $this->service->create($request->all());
     }
 
     public function update(Request $request, $id, $noteId)
     {
-      if (!$this->projectRepository->checkProjectPermissions($id)){
-        return msgAccessDenied();
-      }
+      // if (!$this->projectRepository->checkProjectPermissions($id)){
+      //   return msgAccessDenied();
+      // }
       return $this->service->update($request->all(),$noteId);
     }
 
@@ -63,16 +63,16 @@ class ProjectNoteController extends Controller
     {
       try {
 
-        if (!$this->projectRepository->checkProjectPermissions($id)){
-          return msgAccessDenied();
-        }
+        // if (!$this->projectRepository->checkProjectPermissions($id)){
+        //   return msgAccessDenied();
+        // }
 
         $group = $this->repository->findWhere(['project_id' => $id, 'id' => $noteId]);
 
         if (count($group['data'])==0) {
           return msgResourceNotFound();
         } else {
-          return $group['data'];
+          return $group['data'][0];
         }
       } catch (Exception $e) {
         return msgException($e);
@@ -83,9 +83,9 @@ class ProjectNoteController extends Controller
     {
       try {
 
-        if (!$this->projectRepository->checkProjectPermissions($id)){
-          return msgAccessDenied();
-        }
+        // if (!$this->projectRepository->checkProjectPermissions($id)){
+        //   return msgAccessDenied();
+        // }
 
         $group = $this->repository->skipPresenter()->findWhere(['project_id' => $id, 'id' => $noteId]);
 
