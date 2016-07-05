@@ -10,7 +10,7 @@
 						<div class="form-group" ng-class="{'has-error': !form.project.$valid && form.project.$touched}" >
 							<label class="col-md-4 control-label">Project</label>
 							<div class="col-md-6">
-								<input type="text" class="form-control" name="project" ng-model="note.project_id" required >
+								<input type="text" class="form-control" name="project" ng-model="note.project_id" required disabled>
                 <div ng-messages="form.project.$error" ng-show="form.project.$touched" class="help-block">
                   <div ng-message="required">Campo obrigatório</div>
 
@@ -43,6 +43,7 @@
 
 						<div class="form-group">
 							<div class="col-md-6 col-md-offset-4">
+								<button class="btn btn-danger" back>Cancelar</button>
 								<button type="submit" class="btn btn-primary">Salvar</button>
 							</div>
 						</div>

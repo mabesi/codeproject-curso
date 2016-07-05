@@ -10,7 +10,7 @@ function($scope,$location,$routeParams,Note){
 
     if($scope.form.$valid){
       Note.update({id: $scope.note.id, noteId: $scope.note.project_id},$scope.note,function(){
-        $location.path('/project/'+$scope.note.project_id+'/notes');
+        $location.path('/project/'+$routeParams.id+'/notes');
       });
     }
 

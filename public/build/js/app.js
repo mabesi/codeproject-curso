@@ -5,6 +5,17 @@ angular.module('app.controllers',['ngMessages','angular-oauth2']);
 
 angular.module('app.services',['ngResource']);
 
+app.directive('back', ['$window', function($window) {
+    return {
+        restrict: 'A',
+        link: function (scope, elem, attrs) {
+            elem.bind('click', function () {
+                $window.history.back();
+            });
+        }
+    };
+}]);
+
 app.provider('appConfig',function(){
 
   var config = {
@@ -60,7 +71,7 @@ app.config(['$routeProvider',
       templateUrl: 'build/views/note/new.html',
       controller: 'NoteNewController'
     })
-    .when('/project/:id/notes/:noteId',{
+    .when('/project/:id/notes/:noteId/show',{
       templateUrl: 'build/views/note/note.html',
       controller: 'NoteController'
     })

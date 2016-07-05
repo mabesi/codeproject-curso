@@ -2,7 +2,7 @@
 	<div class="row">
 		<div class="col-md-8 col-md-offset-2">
 			<div class="panel panel-default">
-				<div class="panel-heading">Listagem de Notas</div>
+				<div class="panel-heading">Listagem de Notas (<a ng-href="#/project/{{project}}/notes/new">Nova Nota</a>)</div>
 				<div class="panel-body">
 
           <table class="table">
@@ -20,8 +20,9 @@
                 <td>{{n.id}}</td>
                 <td>{{n.project_id}}</td>
                 <td>{{n.title}}</td>
-                <td>{{n.note}}</td>
+                <td>{{n.note | limitTo: 50}}...</td>
                 <td>
+                	<a ng-href="#/project/{{n.project_id}}/notes/{{n.id}}/show">Ver</a> |
                 	<a ng-href="#/project/{{n.project_id}}/notes/{{n.id}}/edit">Editar</a> |
                 	<a ng-href="#/project/{{n.project_id}}/notes/{{n.id}}/remove">Excluir</a>
                 </td>

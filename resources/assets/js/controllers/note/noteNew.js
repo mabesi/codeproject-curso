@@ -11,7 +11,7 @@ function($scope,$location,$routeParams,Note){
   $scope.save = function(){
     if($scope.form.$valid){
       $scope.note.$save({id: $routeParams.id}).then(function(){
-        $location.path('/project/'+$scope.note.project_id+'/notes');
+        $location.path('/project/'+$routeParams.id+'/notes');
       });
     }
   }
