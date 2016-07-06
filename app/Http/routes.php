@@ -23,6 +23,8 @@ Route::group(['middleware' => 'oauth'], function(){
 
   Route::resource('client','ClientController',['except' => ['create','edit']]);
 
+  Route::get('user/authenticated', 'UserController@authenticated');
+
   Route::get('project/{id}/file', 'ProjectFileController@index');
   Route::post('project/{id}/file', 'ProjectFileController@store');
   Route::get('project/{id}/file/{fileId}', 'ProjectFileController@show');

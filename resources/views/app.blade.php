@@ -103,6 +103,7 @@
     <script src="{{asset('build/js/controllers/note/noteRemove.js')}}"></script>
 
 		<!-- SERVICES -->
+		<script src="{{asset('build/js/services/user.js')}}"></script>
 		<script src="{{asset('build/js/services/client.js')}}"></script>
 		<script src="{{asset('build/js/services/note.js')}}"></script>
 
